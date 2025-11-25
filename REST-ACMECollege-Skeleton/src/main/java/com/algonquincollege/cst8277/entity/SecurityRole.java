@@ -1,0 +1,101 @@
+package com.algonquincollege.cst8277.entity;
+
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
+
+@SuppressWarnings("unused")
+@Entity
+@Table(name = "security_role")
+@NamedQuery(name = SecurityRole.SECURITY_ROLE_BY_NAME, query = "SELECT r FROM SecurityRole r WHERE r.roleName = :param1")
+public class SecurityRole implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+	public static final String SECURITY_ROLE_BY_NAME = "SecurityRole.RoleByName";
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "role_id")
+    protected int id;
+    
+    @Basic(optional = false)
+    @Column(name = "name", nullable = false, length = 45)
+    protected String roleName;
+    
+    @ManyToMany(mappedBy = "roles")
+    protected Set<SecurityUser> users = new HashSet<SecurityUser>();
+
+    public SecurityRole() {
+        super();
+    }
+    
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public Set<SecurityUser> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<SecurityUser> users) {
+        this.users = users;
+    }
+
+    public void addUserToRole(SecurityUser user) {
+        getUsers().add(user);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        return prime * result + Objects.hash(getId());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof SecurityRole otherSecurityRole) {
+            return Objects.equals(this.getId(), otherSecurityRole.getId());
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("SecurityRole [id = ").append(id).append(", ");
+        if (roleName != null)
+            builder.append("roleName = ").append(roleName);
+        builder.append("]");
+        return builder.toString();
+    }
+}
